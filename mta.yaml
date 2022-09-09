@@ -1,0 +1,94 @@
+_schema-version: "3.2"
+ID: cicd-test
+description: A Fiori application.
+version: 0.0.1
+modules:
+- name: cicd-test-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: cicd-test-destination-service
+    parameters:
+      content-target: true
+  - name: cicd-test-repo-host
+    parameters:
+      service-key:
+        name: cicd-test-repo-host-key
+  - name: cicd-test-uaa
+    parameters:
+      service-key:
+        name: cicd-test-uaa-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: cicd-test_html_repo_host
+          ServiceInstanceName: cicd-test-html5-srv
+          ServiceKeyName: cicd-test-repo-host-key
+          sap.cloud.service: cicd-test
+        - Authentication: OAuth2UserTokenExchange
+          Name: cicd-test_uaa
+          ServiceInstanceName: cicd-test-xsuaa-srv
+          ServiceKeyName: cicd-test-uaa-key
+          sap.cloud.service: cicd-test
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+- name: cicd-test-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: cicd-test-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - cicdtest.zip
+      name: cicdtest
+      target-path: resources/
+- name: cicdtest
+  type: html5
+  path: .
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: cicd-test-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: cicd-test-destination-service
+    service-plan: lite
+- name: cicd-test-uaa
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: cicd-test-xsuaa-srv
+    service-plan: application
+- name: cicd-test-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: cicd-test-html5-srv
+    service-plan: app-host
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
