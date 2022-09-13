@@ -17,7 +17,7 @@ stages:
     cfOrg: "ca658810trial"
     cfSpace: "dev"
     cfAppName: "app"
-    cfCredentialsId: "deploy-to-cf-test-2"
+    cfCredentialsId: "ramigo"
     uiVeri5ExecuteTests: false
 
   Release:
@@ -26,7 +26,7 @@ stages:
     cfOrg: "ca658810trial"
     cfSpace: "dev"
     cfAppName: "app"
-    cfCredentialsId: "deploy-to-cf-test-2"
+    cfCredentialsId: "ramigo"
     tmsUpload: false
 
 steps:
