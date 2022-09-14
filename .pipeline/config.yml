@@ -12,7 +12,7 @@ stages:
     karmaExecuteTests: false
 
   Acceptance:
-    cloudFoundryDeploy: true
+    cloudFoundryDeploy: false
     cfApiEndpoint: "https://api.cf.us10.hana.ondemand.com"
     cfOrg: "ca658810trial"
     cfSpace: "dev"
@@ -27,7 +27,7 @@ stages:
     cfSpace: "dev"
     cfAppName: "app"
     cfCredentialsId: "ramigo"
-    tmsUpload: false
+    tmsUpload: true
 
 steps:
   artifactPrepareVersion:
@@ -40,5 +40,5 @@ steps:
     mtaDeployParameters: "-f --version-rule ALL"
 
   tmsUpload:
-    nodeName: "qa"
+    nodeName: "Qa"
     credentialsId: "tms-sk"
